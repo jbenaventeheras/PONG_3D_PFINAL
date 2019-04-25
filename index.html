@@ -1,0 +1,41 @@
+a!doctype html>
+<html>
+	<head>
+		<title>3D PONG</title>
+		<style>
+			body {
+				background-color: black;
+			}
+
+			#scoreboard,h1 {
+				text-align: center;
+				font-family: Segoe UI, Helvetica, Ubuntu, sans-serif;
+				color: white;
+			}
+			#scores {
+				font-size:300%;
+				margin:0;
+				color: white;
+			}
+			#title {a
+				background-color: white;
+				color: black;
+			}
+		</style>
+	</head>
+
+	<body onload='start();'>
+		<h1 id='title'>3D PONG</h1>
+		<h1 id='scores'>0-0</h1>
+		<script src='keyboard.js'></script>
+		<script src='pong_javier_benavente.js'></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.6/dat.gui.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/103/three.min.js"></script>
+		<div id='scoreboard'>
+			<h4 id='winnerBoard'>First to 3 wins!</h2>
+			<h2 id='winnerBoard'>PULSA ESPACIO PARA COMENZAR</h2>
+			<h3>A - move left
+			<br>D - move right</h3>
+		</div>
+	</body>
+</html>
