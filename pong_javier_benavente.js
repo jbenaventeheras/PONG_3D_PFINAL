@@ -1,5 +1,5 @@
 
-   var stepX = 0.15;
+   var stepX = 0.25;
    var stepY = 0.25;
    var score1 = 0;
    var score2 = 0;
@@ -23,7 +23,7 @@
       var sceneHeight = window.innerHeight;
 
       var camera = new THREE.PerspectiveCamera(56, sceneWidth / sceneHeight, 0.01, 100);
-      camera.position.set(0, -50, 15);
+      camera.position.set(0, -45, 20);
       camera.lookAt(scene.position);
 
       var renderer = new THREE.WebGLRenderer({
@@ -55,13 +55,7 @@
 
       var borders = [ leftBorder, rightBorder, topBorder, downBorder, playerPaddle, cpuPaddle];
 
-
-
-
       animate(sphere, borders, renderer, scene, camera, playerPaddle,cpuPaddle);
-
-
-
 
       ///Fov control
       var control = new function() {
@@ -82,9 +76,8 @@
    }
 
 
-
    function animate(sphere, borders, renderer, scene, camera, playerPaddle,cpuPaddle,playersPaddles) {
-      checkCollision(sphere, borders);
+      checkCollision(sphere, borders,cpuPaddle,playerPaddle);
       ballMovement(sphere);
       cpuPaddleMovement(cpuPaddle, sphere);
       playerMovement(playerPaddle, sphere)
@@ -119,7 +112,7 @@
 
     // Move the Player paddle
     function playerMovement(playerPaddle, sphere){
-    	// Move up & Down PlayerPaddle
+// Move up & Down PlayerPaddleH
       	if (Key.isDown(Key.A)){
       		playerPaddle.position.x = playerPaddle.position.x - 1;
 
@@ -234,20 +227,36 @@
                // Collision detected
                if (collisionResults[0].object.name == "left" || collisionResults[0].object.name == "right") {
                   stepX *= -1;
+                  var wall = new Audio('pong_wall.wav');
+                  wall.play();
                }
                if (collisionResults[0].object.name == "down" ) {
                  sphere.position.x = 0;
                  sphere.position.y = 0;
 
+                 var wall = new Audio('pong_fail.wav');
+                 wall.play();
                  score2 += 1;
                }
                if ( collisionResults[0].object.name == "top") {
+
                  sphere.position.x = 0;
                  sphere.position.y = 0;
+                 var wall = new Audio('pong_faill.wav');
+                 wall.play();
                  score1 += 1;
                }
                if (collisionResults[0].object.name == "playerPaddle" || collisionResults[0].object.name == "cpuPaddle") {
                   stepY *= -1;
+                  // Wall hit sound
+                  var wall = new Audio('pong_hit.wav');
+                  wall.play();
+                  if (sphere.position.x > playerPaddle.position.x + 1 || sphere.position.x < playerPaddle.position.x - 1){
+
+                  }
+                  if (sphere.position.x < playerPaddle.position.x + 1 || sphere.position.x > playerPaddle.position.x - 1){
+
+                  }
                }
                break;
             }
