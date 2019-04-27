@@ -1,9 +1,10 @@
-
+   var maxSpeed = 1;
    var stepX = 0.15;
    var stepY = 0.25;
    var score1 = 0;
    var score2 = 0;
    var begin = true;
+   var countCollision=0;
 
    function start(){
      if (begin){
@@ -84,7 +85,7 @@
 
 
    function animate(sphere, borders, renderer, scene, camera, playerPaddle,cpuPaddle,playersPaddles) {
-      checkCollision(sphere, borders);
+      checkCollision(sphere, borders, cpuPaddle,playerPaddle);
       ballMovement(sphere);
       cpuPaddleMovement(cpuPaddle, sphere);
       playerMovement(playerPaddle, sphere)
@@ -221,9 +222,58 @@
       return material;
    }
 
-   var countCollision=0;
+   function angleVaration(sphere, cpuPaddle,playerPaddle) {
 
-   function checkCollision(sphere, borders,cpuPaddle,playerPaddle) {
+     if (sphere.position.x >= playerPaddle.position.x + 1 || sphere.position.x <= playerPaddle.position.x - 1){
+           stepX = 0.50;
+               }
+     if (sphere.position.x <= playerPaddle.position.x + 1 || sphere.position.x >= playerPaddle.position.x - 1){
+       stepX = 0.25;
+     }
+     if (sphere.position.x >= cpuPaddle.position.x + 1 || sphere.position.x <= cpuPaddle.position.x - 1){
+           stepX = 0.50;
+               }
+     if (sphere.position.x <= cpuPaddle.position.x + 1 || sphere.position.x >= cpuPaddle.position.x - 1){
+       stepX = 0.25;
+     }
+
+   }
+
+   var posicion1;
+   var posicion2;
+   var distancia;
+   function speedVaration(sphere,cpuPaddle,playerPaddle,colisiontype) {
+     console.log (colisiontype);
+
+      if (colisiontype == "cpuPaddle"){
+       posicion1 = playerPaddle.position.x ;
+
+      }
+      if (colisiontype == "playerPaddle"){
+       posicion2 =playerPaddle.position.x
+       if (Math.abs(posicion1) > Math.abs(posicion2)) {
+       var  distancia = posicion1 - posicion2
+       }
+       if (Math.abs(posicion2) > Math.abs(posicion1)) {
+         distancia = posicion2 - posicion1
+       }
+     }
+
+            if(distancia > 5 || distancia < -5){
+              stepX = stepX + 0.05;
+              console.log( "hola");
+              stepY = stepY + 0.05;
+            }else{
+            stepX *= 1;
+            stepY *= 1;
+            console.log ("hola2");
+
+          }
+}
+
+
+
+      function checkCollision(sphere, borders,cpuPaddle,playerPaddle) {
          document.getElementById("scores").innerHTML = score1 + "-" + score2;
          var originPosition = sphere.position.clone();
          countCollision++;
@@ -241,17 +291,23 @@
                if (collisionResults[0].object.name == "down" ) {
                  sphere.position.x = 0;
                  sphere.position.y = 0;
-
                  score2 += 1;
+                 stepX = 0.15;
+                 stepY = 0.25;
                }
                if ( collisionResults[0].object.name == "top") {
                  sphere.position.x = 0;
                  sphere.position.y = 0;
                  score1 += 1;
+                 stepX = 0.15;
+                 stepY = 0.25;
               }
                if (countCollision > 20 && (collisionResults[0].object.name == "playerPaddle" || collisionResults[0].object.name == "cpuPaddle")) {
                   stepY *= -1;
                   countCollision=0;
+                  angleVaration(sphere, cpuPaddle,playerPaddle);
+                  speedVaration(sphere,cpuPaddle,playerPaddle,collisionResults[0].object.name);
+
                }
                break;
             }
