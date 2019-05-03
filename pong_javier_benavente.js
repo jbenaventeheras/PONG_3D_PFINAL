@@ -1,12 +1,10 @@
-   var maxSpeed = 1;
    var stepX = 0.15;
    var stepY = 0.25;
    var score1 = 0;
    var score2 = 0;
    var begin = true;
-   var countCollision=0;
 
-   function start(){
+ function start(){
      if (begin){
        requestAnimationFrame(start);
        if (Key.isDown(Key.SPACE)){
@@ -56,13 +54,7 @@
 
       var borders = [ leftBorder, rightBorder, topBorder, downBorder, playerPaddle, cpuPaddle];
 
-
-
-
       animate(sphere, borders, renderer, scene, camera, playerPaddle,cpuPaddle);
-
-
-
 
       ///Fov control
       var control = new function() {
@@ -83,12 +75,11 @@
    }
 
 
-
    function animate(sphere, borders, renderer, scene, camera, playerPaddle,cpuPaddle,playersPaddles) {
       checkCollision(sphere, borders, cpuPaddle,playerPaddle);
       ballMovement(sphere);
       cpuPaddleMovement(cpuPaddle, sphere);
-      playerMovement(playerPaddle, sphere)
+      playerMovement(playerPaddle, sphere);
 
       renderer.render(scene, camera);
 
@@ -259,57 +250,65 @@
        }
      }
 
-            if(distancia > 5 || distancia < -5){
-              stepX = stepX + 0.05;
-              console.log( "hola");
-              stepY = stepY + 0.05;
-            }else{
-            stepX *= 1;
-            stepY *= 1;
-            console.log ("hola2");
+    if(distancia > 5 || distancia < -5){
+      stepX = stepX + 0.5;
+      console.log( "hola");
+      stepY = stepY + 0.5;
+    }else{
+    stepX *= 1;
+    stepY *= 1;
+    console.log ("hola2");
 
           }
 }
 
 
-
-      function checkCollision(sphere, borders,cpuPaddle,playerPaddle) {
-         document.getElementById("scores").innerHTML = score1 + "-" + score2;
-         var originPosition = sphere.position.clone();
-         countCollision++;
-         for (var i = 0; i < sphere.geometry.vertices.length; i++) {
-            var localVertex = sphere.geometry.vertices[i].clone();
-            var globalVertex = localVertex.applyMatrix4(sphere.matrix);
-            var directionVector = globalVertex.sub(sphere.position);
-            var ray = new THREE.Raycaster(originPosition, directionVector.clone().normalize());
-            var collisionResults = ray.intersectObjects(borders);
-            if (collisionResults.length > 0 && collisionResults[0].distance < directionVector.length()) {
-               // Collision detected
-               if (collisionResults[0].object.name == "left" || collisionResults[0].object.name == "right") {
-                  stepX *= -1;
-               }
-               if (collisionResults[0].object.name == "down" ) {
-                 sphere.position.x = 0;
-                 sphere.position.y = 0;
-                 score2 += 1;
-                 stepX = 0.15;
-                 stepY = 0.25;
-               }
-               if ( collisionResults[0].object.name == "top") {
-                 sphere.position.x = 0;
-                 sphere.position.y = 0;
-                 score1 += 1;
-                 stepX = 0.15;
-                 stepY = 0.25;
-              }
-               if (countCollision > 20 && (collisionResults[0].object.name == "playerPaddle" || collisionResults[0].object.name == "cpuPaddle")) {
-                  stepY *= -1;
-                  countCollision=0;
-                  angleVaration(sphere, cpuPaddle,playerPaddle);
-                  speedVaration(sphere,cpuPaddle,playerPaddle,collisionResults[0].object.name);
-
-               }
-               break;
+    var countCollision=0;
+    function checkCollision(sphere, borders,cpuPaddle,playerPaddle) {
+       document.getElementById("scores").innerHTML = score1 + "-" + score2;
+       var originPosition = sphere.position.clone();
+       countCollision++;
+       for (var i = 0; i < sphere.geometry.vertices.length; i++) {
+          var localVertex = sphere.geometry.vertices[i].clone();
+          var globalVertex = localVertex.applyMatrix4(sphere.matrix);
+          var directionVector = globalVertex.sub(sphere.position);
+          var ray = new THREE.Raycaster(originPosition, directionVector.clone().normalize());
+          var collisionResults = ray.intersectObjects(borders);
+          if (collisionResults.length > 0 && collisionResults[0].distance < directionVector.length()) {
+             // Collision detected
+             if (collisionResults[0].object.name == "left" || collisionResults[0].object.name == "right") {
+               var wall = new Audio('pong_wall.wav');
+               wall.play();
+                stepX *= -1;
+             }
+             if (collisionResults[0].object.name == "down" ) {
+               var wall = new Audio('pong_fail.wav');
+               wall.play();
+               sphere.position.x = 0;
+               sphere.position.y = 0;
+               score2 += 1;
+               stepX = 0.15;
+               stepY = 0.25;
+             }
+             if ( collisionResults[0].object.name == "top") {
+               var wall = new Audio('pong_fail.wav');
+               wall.play();
+               sphere.position.x = 0;
+               sphere.position.y = 0;
+               score1 += 1;
+               stepX = 0.15;
+               stepY = 0.25;
             }
-         }
-   }
+             if (countCollision > 20 && (collisionResults[0].object.name == "playerPaddle" || collisionResults[0].object.name == "cpuPaddle")) {
+                stepY *= -1;
+                countCollision=0;
+                var wall = new Audio('pong_hit.wav');
+                wall.play();
+                angleVaration(sphere, cpuPaddle,playerPaddle);
+                speedVaration(sphere,cpuPaddle,playerPaddle,collisionResults[0].object.name);
+
+             }
+             break;
+          }
+       }
+ }
